@@ -7,7 +7,7 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import java.lang.IllegalStateException
 
 fun ImageView.withUnmanagedLokker(executor: LokkerImageRequest.Executor): LokkerImageRequest.Builder {
-    if (!lokkerInstance.isInitialized) {
+    if (!isLokkerInitialized) {
         throw IllegalStateException("Alogoloader should be initialized with Lokker.intiWith")
     }
     // This could be improved to prevent the ImqgeView from leaking in case the builder is not used

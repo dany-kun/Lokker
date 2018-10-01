@@ -8,11 +8,11 @@ import java.lang.IllegalStateException
 
 internal lateinit var lokkerInstance: Lokker
 
-internal val Lokker.isInitialized: Boolean
+internal val isLokkerInitialized: Boolean
     get() = ::lokkerInstance.isInitialized
 
 
-class Lokker private constructor(
+class Lokker internal constructor(
         private val fetcher: LokkerFetcher,
         private val cache: LokkerCache?) {
 
@@ -49,11 +49,11 @@ class Lokker private constructor(
         fun initWith(fetcher: LokkerFetcher, configBlock: Builder.() -> Unit = {}): Lokker {
             val builder = Builder(fetcher).apply(configBlock)
             return Lokker(builder.fetcher, builder.cache).also {
-                initGlobalInstance(builder, it)
+                initGlobalInstance(it)
             }
         }
 
-        private fun initGlobalInstance(builder: Builder, it: Lokker) {
+        private fun initGlobalInstance(it: Lokker) {
             if (::lokkerInstance.isInitialized) {
                 throw IllegalStateException("Lokker was already initialized")
             }
