@@ -14,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockkClass
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,32 +62,38 @@ class LokkerTest {
     @Test
     fun cancelLoadingImage() {
         val imageView = ImageView(RuntimeEnvironment.application)
+        var completed = false
         runBlocking {
             coEvery { fetcher.fetchImage(any()) } returns bitmap
             val request = imageView
                 .withLokker(this)
                 .setImageFromUrl("test") {
                     errorListener = ThrowingErrorListener()
+                    onCompleted = { completed = true }
                 }
             request.cancel()
         }
         val imageBitmap = (imageView.drawable as? BitmapDrawable)?.bitmap
         assertEquals(imageBitmap?.getPixel(0, 0), null)
+        assertTrue(completed)
     }
 
     @Test(expected = LokkerTestError::class)
     fun errorOnLoadingImage() {
         val imageView = ImageView(RuntimeEnvironment.application)
+        var completed = false
         runBlocking {
             coEvery { fetcher.fetchImage(any()) } throws LokkerTestError()
             imageView
                 .withLokker(this)
                 .setImageFromUrl("test") {
                     errorListener = ThrowingErrorListener()
+                    onCompleted = { completed = true }
                 }
         }
         val imageBitmap = (imageView.drawable as? BitmapDrawable)?.bitmap
         assertEquals(imageBitmap?.getPixel(0, 0), null)
+        assertTrue(completed)
     }
 
     @Test

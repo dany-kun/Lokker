@@ -5,7 +5,6 @@ import android.widget.ImageView
 import com.danykun.lokker.lib.cache.LokkerCache
 import com.danykun.lokker.lib.executor.Executor
 import com.danykun.lokker.lib.fetch.LokkerFetcher
-import java.lang.IllegalStateException
 
 internal lateinit var lokkerInstance: Lokker
 
@@ -42,14 +41,28 @@ class Lokker internal constructor(
         }
     }
 
-    class Builder(val fetcher: LokkerFetcher) {
+    /**
+     * Configuration [Lokker] instances
+     */
+    class Builder(internal val fetcher: LokkerFetcher) {
+        /**
+         * [LokkerCache] to prevent making useless calls if the required url request [Bitmap] result is cached
+         */
         var cache: LokkerCache? = null
     }
 
     companion object {
-        fun initWith(fetcher: LokkerFetcher, configBlock: Builder.() -> Unit = {}): Lokker {
+        /**
+         * Specify the [LokkerFetcher] and other configuration to be used by Lokker.
+         * This method setup a global and unique [Lokker] instance.
+         * Must be called exactly once before making any request.
+         *
+         * @param fetcher [LokkerFetcher] to specify how get a [bitmap][Bitmap] from an url
+         * @param configBlock Config block to add additional configuration to the [Lokker] instance. See [Builder]
+         */
+        fun initWith(fetcher: LokkerFetcher, configBlock: Builder.() -> Unit = {}) {
             val builder = Builder(fetcher).apply(configBlock)
-            return Lokker(builder.fetcher, builder.cache).also {
+            Lokker(builder.fetcher, builder.cache).also {
                 initGlobalInstance(it)
             }
         }
