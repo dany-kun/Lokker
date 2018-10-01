@@ -1,4 +1,4 @@
-package com.danykun.lokker.lib.hash
+package com.danykun.lokker.lib.cache.hash
 
 import org.junit.Test
 

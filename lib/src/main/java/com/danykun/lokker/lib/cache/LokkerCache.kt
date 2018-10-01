@@ -1,7 +1,7 @@
 package com.danykun.lokker.lib.cache
 
 import android.graphics.Bitmap
-import com.danykun.lokker.lib.hash.UrlHasher
+import com.danykun.lokker.lib.cache.hash.UrlHasher
 
 interface LokkerCache {
 
