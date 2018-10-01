@@ -50,7 +50,9 @@ class LokkerTest {
         runBlocking {
             coEvery { fetcher.fetchImage(any()) } returns bitmap
             imageView.withLokker(this)
-                .setImageFromUrl("test", errorListener = ThrowingErrorListener())
+                .setImageFromUrl("test") {
+                    errorListener = ThrowingErrorListener()
+                }
         }
         val imageBitmap = (imageView.drawable as? BitmapDrawable)?.bitmap
         assertEquals(imageBitmap?.getPixel(0, 0), Color.RED)
@@ -63,7 +65,9 @@ class LokkerTest {
             coEvery { fetcher.fetchImage(any()) } returns bitmap
             val request = imageView
                 .withLokker(this)
-                .setImageFromUrl("test", errorListener = ThrowingErrorListener())
+                .setImageFromUrl("test") {
+                    errorListener = ThrowingErrorListener()
+                }
             request.cancel()
         }
         val imageBitmap = (imageView.drawable as? BitmapDrawable)?.bitmap
@@ -77,7 +81,9 @@ class LokkerTest {
             coEvery { fetcher.fetchImage(any()) } throws LokkerTestError()
             imageView
                 .withLokker(this)
-                .setImageFromUrl("test", errorListener = ThrowingErrorListener())
+                .setImageFromUrl("test") {
+                    errorListener = ThrowingErrorListener()
+                }
         }
         val imageBitmap = (imageView.drawable as? BitmapDrawable)?.bitmap
         assertEquals(imageBitmap?.getPixel(0, 0), null)

@@ -3,6 +3,7 @@ package com.danykun.lokker.lib
 import android.graphics.Bitmap
 import android.widget.ImageView
 import com.danykun.lokker.lib.cache.LokkerCache
+import com.danykun.lokker.lib.executor.Executor
 import com.danykun.lokker.lib.fetch.LokkerFetcher
 import java.lang.IllegalStateException
 
@@ -16,7 +17,7 @@ class Lokker internal constructor(
         private val fetcher: LokkerFetcher,
         private val cache: LokkerCache?) {
 
-    internal fun loadImageInto(executor: LokkerImageRequest.Executor,
+    internal fun loadImageInto(executor: Executor,
                                imageView: ImageView,
                                url: String): LokkerImageRequest {
         return executor.execute({

@@ -1,6 +1,5 @@
 package com.danykun.lokker.lib.executor
 
-import com.danykun.lokker.lib.LokkerImageRequest
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
@@ -18,7 +17,7 @@ class CoroutinesExecutorTest {
     @Test
     fun testCoroutinesWithoutError() {
         runBlocking {
-            val executor: LokkerImageRequest.Executor = CoroutinesExecutor(this)
+            val executor: Executor = CoroutinesExecutor(this)
             executor.execute({ 1 }, { assertEquals(it, 1) })
         }
     }
@@ -26,8 +25,8 @@ class CoroutinesExecutorTest {
     @Test(expected = TestExecutorError::class)
     fun testCoroutinesThrowing() {
         runBlocking {
-            val executor: LokkerImageRequest.Executor = CoroutinesExecutor(this).apply {
-                errorListener = { throwable -> throw throwable }
+            val executor: Executor = CoroutinesExecutor(this).apply {
+                config.errorListener = { throwable -> throw throwable }
             }
             executor.execute({ throw TestExecutorError() }) {
                 throw IllegalAccessException("This should not be called")
@@ -38,8 +37,8 @@ class CoroutinesExecutorTest {
     @Test(expected = TestExecutorError::class)
     fun testUiBlockThrowing() {
         runBlocking {
-            val executor: LokkerImageRequest.Executor = CoroutinesExecutor(this).apply {
-                errorListener = { throwable -> throw throwable }
+            val executor: Executor = CoroutinesExecutor(this).apply {
+                config.errorListener = { throwable -> throw throwable }
             }
             executor.execute({ 1 }) { throw TestExecutorError() }
         }
@@ -49,9 +48,9 @@ class CoroutinesExecutorTest {
     fun testCancelledExecution() {
         var onCompletedCall = false
         runBlocking {
-            val executor: LokkerImageRequest.Executor = CoroutinesExecutor(this).apply {
-                errorListener = { throw IllegalAccessException("This should not be called") }
-                onCompleted = { onCompletedCall = true }
+            val executor: Executor = CoroutinesExecutor(this).apply {
+                config.errorListener = { throw IllegalAccessException("This should not be called") }
+                config.onCompleted = { onCompletedCall = true }
             }
             val request = executor.execute({ delay(1, TimeUnit.MINUTES); 1 }) {
                 throw IllegalAccessException("This should not be called")

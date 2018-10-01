@@ -5,24 +5,23 @@ import com.danykun.lokker.lib.LokkerImageRequest
 import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.Main
 
-class CoroutinesExecutor(private val coroutineScope: CoroutineScope) : LokkerImageRequest.Executor, CoroutineScope by coroutineScope {
+class CoroutinesExecutor(private val coroutineScope: CoroutineScope) : Executor, CoroutineScope by coroutineScope {
 
-    override var errorListener: ((Throwable) -> Unit)? = null
-    override var onCompleted: () -> Unit = {}
+    override val config: Executor.Config = Executor.Config()
 
     constructor(lifecycleOwner: LifecycleOwner) : this(lifecycleOwner.coroutineScope)
 
     override fun <T> execute(block: suspend () -> T, onUi: (T) -> Unit): LokkerImageRequest {
         val job = launch(
-                context = CoroutineExceptionHandler { _, e -> errorListener?.invoke(e) },
-                onCompletion = { _ -> onCompleted() }) {
+            context = CoroutineExceptionHandler { _, e -> config.errorListener?.invoke(e) },
+            onCompletion = { _ -> config.onCompleted() }) {
             val bitmapOp = async { block() }
             withContext(Dispatchers.Main) {
                 try {
                     val bitmap = bitmapOp.await()
                     onUi(bitmap)
                 } catch (e: Throwable) {
-                    errorListener?.invoke(e) ?: throw e
+                    config.errorListener?.invoke(e) ?: throw e
                 }
             }
         }

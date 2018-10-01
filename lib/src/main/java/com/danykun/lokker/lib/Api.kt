@@ -3,10 +3,11 @@ package com.danykun.lokker.lib
 import android.arch.lifecycle.LifecycleOwner
 import android.widget.ImageView
 import com.danykun.lokker.lib.executor.CoroutinesExecutor
+import com.danykun.lokker.lib.executor.Executor
 import kotlinx.coroutines.experimental.CoroutineScope
 import java.lang.IllegalStateException
 
-fun ImageView.withUnmanagedLokker(executor: LokkerImageRequest.Executor): LokkerImageRequest.Builder {
+fun ImageView.withUnmanagedLokker(executor: Executor): LokkerImageRequest.Builder {
     if (!isLokkerInitialized) {
         throw IllegalStateException("Alogoloader should be initialized with Lokker.intiWith")
     }
