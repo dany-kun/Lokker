@@ -1,2 +1,7 @@
-include ':sample'
-include ':lib'
+def includeEx(String name) {
+    include name
+    project(name).projectDir = "$rootDir${name.replace(':', '/')}" as File
+}
+
+includeEx ':lib:core'
+includeEx ':sample:android'
